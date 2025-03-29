@@ -25,4 +25,14 @@
 
 ![image](https://github.com/user-attachments/assets/a86c9816-f1f1-4553-adb1-f5a757f5ee86)
 
+Пример остановки опроса
 
+![image](https://github.com/user-attachments/assets/b1394e12-b49b-40a1-bf6f-049faff85cb0)
+
+Пример удаление опроса
+
+![image](https://github.com/user-attachments/assets/4bc1bbd5-f16d-458e-b540-4dd3e90f6b5d)
+
+## Логирование
+
+Логи можно посмотрев введя в консоль docker logs и id контейнера.
