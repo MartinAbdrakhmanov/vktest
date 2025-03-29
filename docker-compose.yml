@@ -1,0 +1,21 @@
+services:
+  tarantool:
+    build: ./tarantool
+    container_name: tarantool
+    environment:
+      - TT_USERNAME=polluser
+      - TT_PASSWORD=pass
+    ports:
+      - "3301:3301"
+    volumes:
+      - tarantool_data:/var/lib/tarantool
+
+  pollbot:
+    build: ./pollbot
+    container_name: pollbot
+    restart: always
+    env_file:
+      - ./pollbot/.env
+
+volumes:
+  tarantool_data:
