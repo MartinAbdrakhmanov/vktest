@@ -405,8 +405,10 @@ func handlePollCreate(app *application, post *model.Post, args []string) {
 	pollID := generateUniqueID()
 	title := parsedArgs[0]
 	options := parsedArgs[1:]
+	app.logger.Info().Str("pollID", pollID).Str("creator", post.UserId).Str("title", title).Msg("Creating poll")
 	err := createPoll(pollID, post.UserId, title, options)
 	if err != nil {
+		app.logger.Error().Err(err).Str("pollID", pollID).Msg("Failed to create poll")
 		sendMsgToTalkingChannel(app, fmt.Sprintf("Ошибка создания опроса: %s", err), post.Id)
 		return
 	}
@@ -414,6 +416,7 @@ func handlePollCreate(app *application, post *model.Post, args []string) {
 	for i, opt := range options {
 		response += fmt.Sprintf("%d: %s\n", i+1, opt)
 	}
+	app.logger.Info().Str("pollID", pollID).Msg("Poll created successfully")
 	sendMsgToTalkingChannel(app, response, post.Id)
 }
 
@@ -429,11 +432,14 @@ func handlePollVote(app *application, post *model.Post, args []string) {
 		sendMsgToTalkingChannel(app, "Неверный номер варианта", post.Id)
 		return
 	}
+	app.logger.Info().Str("pollID", pollID).Str("user", post.UserId).Str("option", args[1]).Msg("Voting in poll")
 	err = votePoll(pollID, optionNumber-1)
 	if err != nil {
+		app.logger.Error().Err(err).Str("pollID", pollID).Msg("Failed to vote in poll")
 		sendMsgToTalkingChannel(app, fmt.Sprintf("Ошибка голосования: %s", err), post.Id)
 		return
 	}
+	app.logger.Info().Str("pollID", pollID).Msg("Vote recorded successfully")
 	sendMsgToTalkingChannel(app, fmt.Sprintf("Ваш голос за вариант %d принят", optionNumber), post.Id)
 }
 
@@ -459,11 +465,14 @@ func handlePollStop(app *application, post *model.Post, args []string) {
 		return
 	}
 	pollID := args[0]
+	app.logger.Info().Str("pollID", pollID).Str("user", post.UserId).Msg("Stopping poll")
 	err := stopPoll(pollID)
 	if err != nil {
+		app.logger.Error().Err(err).Str("pollID", pollID).Msg("Failed to stop poll")
 		sendMsgToTalkingChannel(app, fmt.Sprintf("Ошибка остановки опроса: %s", err), post.Id)
 		return
 	}
+	app.logger.Info().Str("pollID", pollID).Str("user", post.UserId).Msg("Poll stopped")
 	sendMsgToTalkingChannel(app, "Опрос остановлен", post.Id)
 }
 
@@ -474,11 +483,14 @@ func handlePollDelete(app *application, post *model.Post, args []string) {
 		return
 	}
 	pollID := args[0]
+	app.logger.Info().Str("pollID", pollID).Str("user", post.UserId).Msg("Deleting poll")
 	err := deletePoll(pollID)
 	if err != nil {
+		app.logger.Error().Err(err).Str("pollID", pollID).Msg("Failed to delete poll")
 		sendMsgToTalkingChannel(app, fmt.Sprintf("Ошибка удаления опроса: %s", err), post.Id)
 		return
 	}
+	app.logger.Info().Str("pollID", pollID).Str("user", post.UserId).Msg("Poll deleted")
 	sendMsgToTalkingChannel(app, "Опрос удалён", post.Id)
 }
 
@@ -514,7 +526,6 @@ func handlePollHelp(app *application, post *model.Post, args []string) {
 	sendMsgToTalkingChannel(app, helpText, post.Id)
 }
 
-// generateUniqueID возвращает уникальный ID опроса.
 func generateUniqueID() string {
 	return fmt.Sprintf("%d", time.Now().UnixNano())
 }
