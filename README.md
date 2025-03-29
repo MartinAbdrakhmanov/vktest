@@ -9,6 +9,8 @@
 ## Работа с ботом
 
 Список команд бота можно посмотреть введя команду /poll help (просто текстом, slash command не создавался).
+
+
 ![image](https://github.com/user-attachments/assets/4fb8b3aa-896b-4dca-8c08-2108946c0064)
 
 
